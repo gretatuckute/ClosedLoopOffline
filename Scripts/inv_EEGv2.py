@@ -18,16 +18,11 @@ import os
 import numpy as np
 import mne
 import matplotlib.cm as cm
-import statsmodels.stats.multitest as sm
 from scipy import stats
 
-
-
-scriptsDir = 'C:\\Users\\Greta\\Documents\\GitHub\\ClosedLoop\\Scripts\\'
-os.chdir(scriptsDir)
-
+os.chdir('/Users/gretatuckute/Documents/GitHub/ClosedLoopOffline/Scripts')
 from variables import *
-from responseTime_func import outputStableLureIdx
+#from responseTime_func import outputStableLureIdx
 
 #%% Pipeline with updated LORO and ouput alpha and clf output values
 
@@ -97,6 +92,8 @@ def extractEvokeds(epochsArray):
 subsAll, subsNF, subsC, meanAll, meanNF, meanC = extractVal('RT_test_acc_corr')
 subsAll_uncor, subsNF_uncor, subsC_uncor, meanAll_uncor, meanNF_uncor, meanC_uncor = extractVal('RT_test_acc_uncorr')
 
+
+1-np.mean(subsAll_LORO)
 #%% RT pipeline analysis. RT decoding accuracy corrected.
 plt.figure(5)
 plt.scatter(np.arange(0,len(subsNF),1),1-subsNF,color='tomato') # NF subjects
@@ -131,6 +128,62 @@ plt.hlines(1-C_mean,11-0.5,22-0.5,label='Mean control',color='dodgerblue',zorder
 plt.hlines(0.5,xmin=-0.5,xmax=21.5,linestyles='dashed',label='Chance',zorder=4,linewidth=2)
 plt.legend(loc='upper right')
 
+# Do rearranged plot. 
+# First, I rearrange in this way:
+subsC_matched = [y for x,y in sorted(zip(idxLst,subsC))] # I.e. just sort behavioral measure based on this list. 
+subsC_matched_np = np.asarray(subsC_matched)
+
+# Plot with sorted values
+fig,ax = plt.subplots()
+ax.grid(color='gainsboro',linewidth=0.5,zorder=0)
+plt.bar(np.arange(0,len(subsNF),1),(1-subsNF),edgecolor='tomato',color='white',zorder=2,linewidth=0.5) # NF subjects
+plt.xticks(np.arange(0,len(subsNF),1),[str(item) for item in np.arange(1,len(subsNF)+1,1)],zorder=5)
+plt.xlabel('Neurofeedback participants')
+plt.ylabel('Decoding error rate')
+plt.title('Real-time decoding error rate')
+NF_mean = np.asarray([meanNF]*11)
+plt.ylim(0.25,0.6)
+plt.hlines(1-NF_mean,-0.5,11-0.5,label='Mean NF',color='tomato',zorder=4,linestyles='dashed',linewidth=2)
+plt.hlines(0.5,xmin=-0.5,xmax=10.5,linestyles='dashed',label='Chance',zorder=4,linewidth=2)
+#plt.legend(loc='upper right')
+
+# Control
+fig,ax = plt.subplots()
+ax.grid(color='gainsboro',linewidth=0.5,zorder=0)
+plt.bar(np.arange(0,len(subsC_matched_np),1),1-subsC_matched_np,edgecolor='dodgerblue',color='white',zorder=2,linewidth=0.5,width=0.2) # C subjects
+plt.xticks(np.arange(0,len(subsC_matched_np),1),[str(item) for item in np.arange(1,len(subsC_matched_np)+1,1)],zorder=5)
+plt.xlabel('Control participants')
+plt.ylabel('Decoding error rate')
+#plt.title('Real-time decoding error rate')
+C_mean = np.asarray([meanC]*11)
+plt.ylim(0.25,0.6)
+plt.hlines(1-C_mean,-0.5,11-0.5,label='Mean control',color='dodgerblue',zorder=4,linestyles='dashed',linewidth=2)
+plt.hlines(0.5,xmin=-0.5,xmax=10.5,linestyles='dashed',label='Chance',zorder=4,linewidth=2)
+#plt.legend(loc='upper right')
+
+
+# IN one plot
+labels = [str(item) for item in np.arange(1,12,1)]
+x = np.arange(len(labels))  # the label locations
+width = 0.35  # the width of the bars
+
+fig, ax = plt.subplots()
+ax.grid(color='gainsboro',linewidth=0.5,zorder=0)
+rects1 = ax.bar(x - width/2, 1-subsNF, width, edgecolor='tomato',color='white',zorder=2,linewidth=0.5)
+rects2 = ax.bar(x + width/2, 1-subsC_matched_np, width, edgecolor='dodgerblue',color='white',zorder=2,linewidth=0.5)
+
+plt.xlabel('Matched participant pairs')
+plt.ylabel('Decoding error rate')
+plt.title('Real-time decoding error rate')
+NF_mean = np.asarray([meanNF]*11)
+C_mean = np.asarray([meanC]*11)
+plt.ylim(0.25,0.6)
+plt.xticks(np.arange(0,len(subsC_matched_np),1),[str(item) for item in np.arange(1,len(subsC_matched_np)+1,1)],zorder=5)
+plt.hlines(1-NF_mean,-0.5,11-0.5,label='Mean NF',color='tomato',zorder=4,linestyles='dashed',linewidth=1.5)
+plt.hlines(1-C_mean,-0.5,11-0.5,label='Mean control',color='dodgerblue',zorder=4,linestyles='dashed',linewidth=1.5)
+plt.hlines(0.5,xmin=-0.5,xmax=10.5,linestyles='dashed',label='Chance',zorder=4,linewidth=1.5,color='gray')
+plt.legend(loc='upper right')
+plt.show()
 
 
 #%% Plot RT accuracies cor vs uncor
@@ -208,6 +261,7 @@ run4=np.mean(np.asarray([subsAll_run[f][3] for f in range(len(subsAll_run))]))
 run5=np.mean(np.asarray([subsAll_run[f][4] for f in range(len(subsAll_run))]))
 
 run_means = [run1]+[run2]+[run3]+[run4]+[run5] # Reality check: Same as np.mean(subsAll)
+run_means_inv = 1-np.asarray(run_means)
 
 fig,ax = plt.subplots()
 ax.grid(color='gainsboro',linewidth=0.5,zorder=0)
@@ -229,8 +283,32 @@ plt.title('Real-time decoding error rate per run')
 plt.legend()
 plt.ylim(0.20,0.6)
 
+# Plot without color scaling
+fig,ax = plt.subplots()
+ax.grid(color='gainsboro',linewidth=0.5,zorder=0)
+
+# NF
+for count,entry in enumerate(subsNF_run):
+    plt.plot(np.arange(1,6),subsNF_run[count],c='tomato',linewidth=0.5,zorder=3)
+    plt.scatter(np.arange(1,6),subsNF_run[count],c='tomato',zorder=3)
+# C
+for count,entry in enumerate(subsC_run):
+    plt.plot(np.arange(1,6),subsC_run[count],c='dodgerblue',linewidth=0.5,zorder=2)
+    plt.scatter(np.arange(1,6),subsC_run[count],c='dodgerblue',zorder=2)
+
+plt.plot(np.arange(1,6),run_means_inv,linestyle='dashed',color='black',label='Mean error rate per run',linewidth=2,zorder=8)
+plt.xticks(np.arange(1,6),['1','2','3','4','5']) 
+plt.xlabel('Run number')
+plt.ylabel('Decoding error rate')
+plt.title('Real-time decoding error rate per run')
+plt.legend()
+plt.ylim(0.20,0.6)
+
 #%% Plot offline train LORO accuracies, bias corrected, stable
 subsAll_LORO, subsNF_LORO, subsC_LORO, meanAll_LORO, meanNF_LORO, meanC_LORO = extractVal('LORO_stable_acc_corr')
+
+NF_mean_LORO = np.asarray([meanNF_LORO]*len(subsNF))
+C_mean_LORO = np.asarray([meanC_LORO]*len(subsC))
 
 fig,ax = plt.subplots()
 ax.grid(color='gainsboro',linewidth=0.5,zorder=0)
@@ -240,14 +318,37 @@ plt.xticks(np.arange(0,22,1),[str(item) for item in np.arange(1,22+1,1)],zorder=
 plt.xlabel('Participants')
 plt.ylabel('Decoding error rate')
 plt.title('Classifier error rate \nLeave-one-run-out cross-validation') #########
-NF_mean_LORO = np.asarray([meanNF_LORO]*len(subsNF))
-C_mean_LORO = np.asarray([meanC_LORO]*len(subsC))
 plt.ylim(0.15,0.6)
 
 plt.hlines(1-NF_mean_LORO,-0.5,11-0.5,label='Mean NF',color='tomato',zorder=4,linestyles='dashed',linewidth=2)
 plt.hlines(1-C_mean_LORO,11-0.5,len(subsAll)-0.5,label='Mean control',color='dodgerblue',zorder=4,linestyles='dashed',linewidth=2)
 plt.hlines(0.5,xmin=-0.5,xmax=21.5,linestyles='dashed',label='Chance',zorder=4,linewidth=2)
 plt.legend(loc='upper right')
+
+# In one plot, bars side by side and matched. 
+# First, I rearrange the controls:
+subsC_LORO_matched = [y for x,y in sorted(zip(idxLst,subsC_LORO))] # I.e. just sort behavioral measure based on this list. 
+subsC_LORO_matched = np.asarray(subsC_matched)
+
+# plot
+fig, ax = plt.subplots()
+ax.grid(color='gainsboro',linewidth=0.5,zorder=0)
+rects1 = ax.bar(x - width/2, 1-subsNF_LORO, width, edgecolor='tomato',color='white',zorder=2,linewidth=0.5)
+rects2 = ax.bar(x + width/2, 1-subsC_LORO_matched, width, edgecolor='dodgerblue',color='white',zorder=2,linewidth=0.5)
+
+plt.xlabel('Matched participant pairs')
+plt.ylabel('Decoding error rate')
+plt.title('Classifier error rate')
+NF_mean = np.asarray([meanNF_LORO]*11)
+C_mean = np.asarray([meanC_LORO]*11)
+plt.ylim(0.15,0.6)
+plt.xticks(np.arange(0,len(subsC_LORO_matched),1),[str(item) for item in np.arange(1,len(subsC_LORO_matched)+1,1)],zorder=5)
+plt.hlines(1-NF_mean_LORO,-0.5,11-0.5,label='Mean NF',color='tomato',zorder=4,linestyles='dashed',linewidth=1.5)
+plt.hlines(1-C_mean_LORO,-0.5,11-0.5,label='Mean control',color='dodgerblue',zorder=4,linestyles='dashed',linewidth=1.5)
+plt.hlines(0.5,xmin=-0.5,xmax=10.5,linestyles='dashed',label='Chance',zorder=4,linewidth=1.5,color='gray')
+plt.legend(loc='upper right')
+plt.show()
+
 
 #%% Plot offline train LOBO accuracies, corrected, stable
 subsAll_LOBO, subsNF_LOBO, subsC_LOBO, meanAll_LOBO, meanNF_LOBO, meanC_LOBO = extractVal('LOBO_stable_train_acc_corr')

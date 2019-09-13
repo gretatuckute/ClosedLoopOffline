@@ -16,13 +16,13 @@ matplotlib.rcParams['figure.constrained_layout.use'] = True
 matplotlib.rcParams['figure.constrained_layout.use'] = False
 
 #%% Directories
-saveDir = 'P:\\closed_loop_data\\beh_analysis\\'
+# saveDir = 'P:\\closed_loop_data\\beh_analysis\\' # NOT CREATED YET
 # saveDir = 'P:\\closed_loop_data\\beh_analysis\\V3_200_1200\\'
-
-figDir = 'C:\\Users\\Greta\\Desktop\\closed_loop\\RESULTS\\EEG\\'
-EEGDir = 'P:\\closed_loop_data\\offline_analysis_pckl\\' 
-scriptsDir = 'C:\\Users\\Greta\\Documents\\GitHub\\ClosedLoop\\Scripts\\'
-npyDir = 'C:\\Users\\Greta\\Documents\\GitHub\\ClosedLoop\\Documents\\npy\\'
+#
+#figDir = 'C:\\Users\\Greta\\Desktop\\closed_loop\\RESULTS\\EEG\\' #CREATE
+#EEGDir = 'P:\\closed_loop_data\\offline_analysis_pckl\\' # CREATE
+scriptsDir = '/Users/gretatuckute/Documents/GitHub/ClosedLoopOffline/Scripts'
+npyDir = '/Users/gretatuckute/Documents/GitHub/ClosedLoopOffline/Documents/npy/'
 
 #%% Variables
 subjID_all = ['07','08','11','13','14','15','16','17','18','19','21','22','23','24','25','26','27','30','31','32','33','34']
@@ -109,7 +109,7 @@ matplotlib.rcParams['mathtext.rm'] = 'Bitstream Vera Sans'
 matplotlib.rcParams['mathtext.it'] = 'Bitstream Vera Sans:italic'
 matplotlib.rcParams['mathtext.bf'] = 'Bitstream Vera Sans:bold'
 matplotlib.rcParams['legend.frameon'] = True
-matplotlib.rc('text',usetex=True)
+matplotlib.rc('text',usetex=False)
 # matplotlib.rc('text',usetex=False)
 matplotlib.rc('font',family='serif')
 plt.rcParams.update({'font.size':12})
