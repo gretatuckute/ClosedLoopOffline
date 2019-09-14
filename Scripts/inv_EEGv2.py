@@ -169,8 +169,8 @@ width = 0.35  # the width of the bars
 
 fig, ax = plt.subplots()
 ax.grid(color='gainsboro',linewidth=0.5,zorder=0)
-rects1 = ax.bar(x - width/2, 1-subsNF, width, edgecolor='tomato',color='white',zorder=2,linewidth=0.5)
-rects2 = ax.bar(x + width/2, 1-subsC_matched_np, width, edgecolor='dodgerblue',color='white',zorder=2,linewidth=0.5)
+rects1 = ax.bar(x - width/2, 1-subsNF, width, edgecolor='tomato',color='white',zorder=2,linewidth=0.8)
+rects2 = ax.bar(x + width/2, 1-subsC_matched_np, width, edgecolor='dodgerblue',color='white',zorder=2,linewidth=0.8)
 
 plt.xlabel('Matched participant pairs')
 plt.ylabel('Decoding error rate')
@@ -179,8 +179,8 @@ NF_mean = np.asarray([meanNF]*11)
 C_mean = np.asarray([meanC]*11)
 plt.ylim(0.25,0.6)
 plt.xticks(np.arange(0,len(subsC_matched_np),1),[str(item) for item in np.arange(1,len(subsC_matched_np)+1,1)],zorder=5)
-plt.hlines(1-NF_mean,-0.5,11-0.5,label='Mean NF',color='tomato',zorder=4,linestyles='dashed',linewidth=1.5)
-plt.hlines(1-C_mean,-0.5,11-0.5,label='Mean control',color='dodgerblue',zorder=4,linestyles='dashed',linewidth=1.5)
+plt.hlines(1-NF_mean,-0.5,11-0.5,label='Neurofeedback group',color='tomato',zorder=4,linestyles='dashed',linewidth=1.5)
+plt.hlines(1-C_mean,-0.5,11-0.5,label='Control group',color='dodgerblue',zorder=4,linestyles='dashed',linewidth=1.5)
 plt.hlines(0.5,xmin=-0.5,xmax=10.5,linestyles='dashed',label='Chance',zorder=4,linewidth=1.5,color='gray')
 plt.legend(loc='upper right')
 plt.show()
@@ -286,7 +286,6 @@ plt.ylim(0.20,0.6)
 # Plot without color scaling
 fig,ax = plt.subplots()
 ax.grid(color='gainsboro',linewidth=0.5,zorder=0)
-
 # NF
 for count,entry in enumerate(subsNF_run):
     plt.plot(np.arange(1,6),subsNF_run[count],c='tomato',linewidth=0.5,zorder=3)
@@ -296,13 +295,18 @@ for count,entry in enumerate(subsC_run):
     plt.plot(np.arange(1,6),subsC_run[count],c='dodgerblue',linewidth=0.5,zorder=2)
     plt.scatter(np.arange(1,6),subsC_run[count],c='dodgerblue',zorder=2)
 
-plt.plot(np.arange(1,6),run_means_inv,linestyle='dashed',color='black',label='Mean error rate per run',linewidth=2,zorder=8)
+# For labels
+plt.plot(np.arange(1,6),subsNF_run[count],c='tomato',linewidth=0.5,zorder=3,label='Neurofeedback group')
+plt.plot(np.arange(1,6),subsC_run[count],c='dodgerblue',linewidth=0.5,zorder=2,label='Control group')
+
+
+plt.plot(np.arange(1,6),run_means_inv,linestyle='dashed',color='black',label='Mean',linewidth=2,zorder=8)
 plt.xticks(np.arange(1,6),['1','2','3','4','5']) 
 plt.xlabel('Run number')
 plt.ylabel('Decoding error rate')
 plt.title('Real-time decoding error rate per run')
-plt.legend()
-plt.ylim(0.20,0.6)
+plt.legend(loc='upper right')
+plt.ylim(0.20,0.65)
 
 #%% Plot offline train LORO accuracies, bias corrected, stable
 subsAll_LORO, subsNF_LORO, subsC_LORO, meanAll_LORO, meanNF_LORO, meanC_LORO = extractVal('LORO_stable_acc_corr')
@@ -333,18 +337,18 @@ subsC_LORO_matched = np.asarray(subsC_matched)
 # plot
 fig, ax = plt.subplots()
 ax.grid(color='gainsboro',linewidth=0.5,zorder=0)
-rects1 = ax.bar(x - width/2, 1-subsNF_LORO, width, edgecolor='tomato',color='white',zorder=2,linewidth=0.5)
-rects2 = ax.bar(x + width/2, 1-subsC_LORO_matched, width, edgecolor='dodgerblue',color='white',zorder=2,linewidth=0.5)
+rects1 = ax.bar(x - width/2, 1-subsNF_LORO, width, edgecolor='tomato',color='white',zorder=2,linewidth=0.8)
+rects2 = ax.bar(x + width/2, 1-subsC_LORO_matched, width, edgecolor='dodgerblue',color='white',zorder=2,linewidth=0.8)
 
 plt.xlabel('Matched participant pairs')
 plt.ylabel('Decoding error rate')
 plt.title('Classifier error rate')
 NF_mean = np.asarray([meanNF_LORO]*11)
 C_mean = np.asarray([meanC_LORO]*11)
-plt.ylim(0.15,0.6)
+plt.ylim(0.15,0.65)
 plt.xticks(np.arange(0,len(subsC_LORO_matched),1),[str(item) for item in np.arange(1,len(subsC_LORO_matched)+1,1)],zorder=5)
-plt.hlines(1-NF_mean_LORO,-0.5,11-0.5,label='Mean NF',color='tomato',zorder=4,linestyles='dashed',linewidth=1.5)
-plt.hlines(1-C_mean_LORO,-0.5,11-0.5,label='Mean control',color='dodgerblue',zorder=4,linestyles='dashed',linewidth=1.5)
+plt.hlines(1-NF_mean_LORO,-0.5,11-0.5,label='Neurofeedback group',color='tomato',zorder=4,linestyles='dashed',linewidth=1.5)
+plt.hlines(1-C_mean_LORO,-0.5,11-0.5,label='Control group',color='dodgerblue',zorder=4,linestyles='dashed',linewidth=1.5)
 plt.hlines(0.5,xmin=-0.5,xmax=10.5,linestyles='dashed',label='Chance',zorder=4,linewidth=1.5,color='gray')
 plt.legend(loc='upper right')
 plt.show()
